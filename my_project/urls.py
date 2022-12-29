@@ -14,13 +14,21 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+from rest_framework import routers
+from rest_framework.authtoken import views as auth_views
 
 from posts import views
 
+router = routers.DefaultRouter()
+router.register('tweet', views.TweetViewSet)
+router.register('comments', views.CommentViewSet)
+router.register('mark_tweet', views.Mark_tweetViewSet)
+router.register('mark_comment', views.Mark_commentViewSet)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/tweet/', views.create_tweet),
-    path('api/comments/', views.create_comments),
-    path('api/marks/', views.create_marks),
+    path('api/token/', auth_views.obtain_auth_token),
+    path('api/v-1.2/', include(router.urls))
+
 ]

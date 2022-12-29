@@ -1,78 +1,58 @@
-import json
 from django.shortcuts import render
-from django.views.decorators.csrf import csrf_exempt
-from django.http import HttpResponse, JsonResponse
+from rest_framework import generics
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+from rest_framework import views
+from rest_framework import authentication
 
-from .models import Tweet, Comment, Mark
+from .models import Tweet, Comment, Mark_tweet, Mark_comment
+from .serializers import TweetSerializer, CommentSerializer, Mark_tweetSerializer, Mark_commentSerializer
 
-@csrf_exempt
-def create_tweet(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        new_tweet = Tweet.objects.create(**data)
-        json_data = {
-            "title": new_tweet.title,
-            "body": new_tweet.body,
-            "author": new_tweet.author
-        }
-        return JsonResponse(json_data, safe=False)
-    if request.method == 'GET':
-        tweets = Tweet.objects.all()
-        data = []
-        for tweet in tweets:
-            data.append(
-                {
-                    'title': tweet.title,
-                    'body': tweet.body,
-                    'author': tweet.author
-                }
-            )
-        json_data = json.dumps(data)
-        return JsonResponse(json_data, safe=False)
+from .my_generics import MyAPIView, ListMixinAPI, CreateMiximAPI, RetrieveMiximAPI, UpdateMiximAPI, DeleteMiximAPI
 
-@csrf_exempt
-def create_comments(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        new_comment = Comment.objects.create(**data)
-        json_data = {
-            "title": new_comment.title,
-            "text": new_comment.text,
-            "tweet_id": new_comment.tweet_id
-        }
-        return JsonResponse(json_data, safe=False)
-    if request.method == 'GET':
-        comments = Comment.objects.all()
-        data = []
-        for comment in comments:
-            data.append(
-                {
-                    "title": comment.title,
-                    "text": comment.text,
-                    "tweet_id": comment.tweet_id
-                }
-            )
-        json_data = json.dumps(data)
-        return JsonResponse(json_data, safe=False)
-@csrf_exempt
-def create_marks(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        new_mark = Mark.objects.create(**data)
-        json_data = {
-            "mark_value": new_mark.mark_value,
-            "tweet_id": new_mark.tweet_id
-        }
-        return JsonResponse(json_data, safe=False)
-    if request.method == 'GET':
-        marks = Mark.objects.all()
-        data = []
-        for mark in marks:
-            data.append(
-                {
-                    'mark_value': mark.mark_value,
-                    'tweet_id': mark.tweet_id,
-                }
-            )
-        json_data = json.dumps(data)
-        return JsonResponse(json_data, safe=False)
+from .models import Tweet, Comment, Mark_tweet, Mark_comment
+
+class TweetViewSet(viewsets.ModelViewSet):
+    queryset = Tweet.objects.all()
+    serializer_class = TweetSerializer
+    authentication_classes = [authentication.BasicAuthentication, authentication.TokenAuthentication]
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_update(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_destroy(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    authentication_classes = [authentication.BasicAuthentication, authentication.TokenAuthentication]
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_update(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_destroy(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+
+class Mark_tweetViewSet(viewsets.ModelViewSet):
+    queryset = Mark_tweet.objects.all()
+    serializer_class = Mark_tweetSerializer
+    authentication_classes = [authentication.BasicAuthentication, authentication.TokenAuthentication]
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_update(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_destroy(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+
+class Mark_commentViewSet(viewsets.ModelViewSet):
+    queryset = Mark_comment.objects.all()
+    serializer_class = Mark_commentSerializer
+    authentication_classes = [authentication.BasicAuthentication, authentication.TokenAuthentication]
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_update(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+    def perform_destroy(self, serializer):
+        serializer.save(user_id=self.request.user.id)
