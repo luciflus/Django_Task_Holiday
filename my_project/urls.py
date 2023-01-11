@@ -17,8 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework import routers
 from rest_framework.authtoken import views as auth_views
+from rest_framework.routers import DefaultRouter
 
+from accounts import views as acc_view
 from posts import views
+
+acc_router = DefaultRouter()
+acc_router.register('register', acc_view.ProfileRegisterAPIView)
 
 router = routers.DefaultRouter()
 router.register('tweet', views.TweetViewSet)
@@ -28,6 +33,9 @@ router.register('mark_comment', views.Mark_commentViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/auth/', include('rest_framework.urls')),
+    path('api/accounts/', include(acc_router.urls)),
+
     path('api/token/', auth_views.obtain_auth_token),
     path('api/v-1.2/', include(router.urls))
 
